@@ -9,6 +9,12 @@
         if (type === "NEW") {
             currentVideo = videoId;
             newVideoLoaded();
+        } else if (type === "PLAY") {
+            youtubePlayer.currentTime = value;
+        } else if (type === "DELETE") {
+            currentVideoBookmarks = currentVideoBookmarks.filter((b) => b.time != value);
+            chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
+            response(currentVideoBookmarks);
         }
     });
 
@@ -34,10 +40,8 @@
 
             youtubeLeftControls = document.getElementsByClassName("ytp-left-controls")[0];
             youtubePlayer = document.getElementsByClassName("video-stream")[0];
-
             youtubeLeftControls.appendChild(bookmarkBtn);
             bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
-
         }
     };
 
