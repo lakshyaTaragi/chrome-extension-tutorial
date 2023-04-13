@@ -1,5 +1,6 @@
 1. sort manifest.json and other starter files
 2. add the + button to get started -> dom manipulation -> contentScript.js file
     - identify current address as a youtube video (see img1)
-    - use service worker from manage extensions page to check logs (see img2)
-    
+    - use service worker from manage extensions page to check backgroun logs (see img2), 
+    contentScript logs in the inspect console 
+    - getting access to ytp-left-controls (see img3)
