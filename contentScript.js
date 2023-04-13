@@ -18,7 +18,7 @@
                 resolve(obj[currentVideo] ? JSON.parse(obj[currentVideo]) : []);
             });
         });
-    }
+    };
 
     const newVideoLoaded = async () => {
         const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
@@ -39,7 +39,7 @@
             bookmarkBtn.addEventListener("click", addNewBookmarkEventHandler);
 
         }
-    }
+    };
 
     const addNewBookmarkEventHandler = async () => {
         const currentTime = youtubePlayer.currentTime;
@@ -57,10 +57,9 @@
             });
         
         console.log("2)", currentVideoBookmarks);
-    }
+    };
 
     newVideoLoaded();
-
 })();
 
 const getTime = t => {
