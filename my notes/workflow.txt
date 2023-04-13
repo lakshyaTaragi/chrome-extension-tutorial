@@ -1,0 +1,5 @@
+1. sort manifest.json and other starter files
+2. add the + button to get started -> dom manipulation -> contentScript.js file
+    - identify current address as a youtube video (see img1)
+    - use service worker from manage extensions page to check logs (see img2)
+    
