@@ -9,16 +9,27 @@
 
         if (type === "NEW") {
             currentVideo = videoId;
+            console.log("flag = ", loadedOnce);
+            newVideoLoaded();
             if (!loadedOnce) {
                 loadedOnce = true;
-                newVideoLoaded();
             }
         } else if (type === "PLAY") {
             youtubePlayer.currentTime = value;
         } else if (type === "DELETE") {
-            currentVideoBookmarks = currentVideoBookmarks.filter((b) => b.time != value);
-            chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
-            response(currentVideoBookmarks);
+            deleteBookmark(value, response);
+            // console.log("delete @", value);
+            // // currentVideoBookmarks = currentVideoBookmarks.filter((bm) => bm.time != value);
+            // console.log("before: ", currentVideoBookmarks.length);
+            // currentVideoBookmarks = currentVideoBookmarks.filter((bm) => {
+            //     if(bm.time == value){
+            //         console.log("deleting #", bm.time);
+            //     }
+            //     return bm.time != value;
+            // });
+            // console.log("after: ", currentVideoBookmarks.length);
+            // chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
+            // response(currentVideoBookmarks);
         }
     });
 
@@ -33,7 +44,7 @@
     const newVideoLoaded = async () => {
         const bookmarkBtnExists = document.getElementsByClassName("bookmark-btn")[0];
         currentVideoBookmarks = await fetchBookmarks();
-        
+        console.log("loaded bookmarks: ", currentVideoBookmarks);
         if (!bookmarkBtnExists) {
             const bookmarkBtn = document.createElement("img");
 
@@ -56,13 +67,37 @@
         };
 
         currentVideoBookmarks = await fetchBookmarks();
-
+        console.log("add @", currentTime);
+        console.log("before: ", currentVideoBookmarks.length);
+        // currentVideoBookmarks.push(newBookmark);
         chrome.storage.sync.set({
             [currentVideo]: JSON.stringify(
                 [...currentVideoBookmarks, newBookmark].sort((a, b) => a.time - b.time)
             )
         });
+        // chrome.storage.sync.set({
+        //     [currentVideo]: JSON.stringify([currentVideoBookmarks].sort())
+        // });
+        console.log("after: ", currentVideoBookmarks.length);
     };
+
+    const deleteBookmark = async (value, response) => {
+        currentVideoBookmarks = await fetchBookmarks();
+        console.log("add @", value);
+        console.log("before: ", currentVideoBookmarks.length);
+        
+        // currentVideoBookmarks = currentVideoBookmarks.filter((bm) => bm.time != value);
+        currentVideoBookmarks = currentVideoBookmarks.filter((bm) => {
+            if(bm.time == value){
+                console.log("deleting #", bm.time);
+            }
+            return bm.time != value;
+        });
+        console.log("after: ", currentVideoBookmarks.length);
+        chrome.storage.sync.set({ [currentVideo]: JSON.stringify(currentVideoBookmarks) });
+        // response(currentVideoBookmarks);
+    };
+
 })();
 
 const getTime = t => {
