@@ -1,7 +1,5 @@
 import { getActiveTabURL } from "./utils.js";
 
-let currentVideo = "";
-
 const addNewBookmark = (bookmarksElement, bookmark) => {
     const bookmarkTitleElement = document.createElement("div");
     const newBookmarkElement = document.createElement("div");
@@ -24,11 +22,6 @@ const addNewBookmark = (bookmarksElement, bookmark) => {
     bookmarksElement.appendChild(newBookmarkElement);
 };
 
-// const viewBookmarks = () => {
-//     let currentBookmarks = [];
-//     chrome.storage.sync.get([currentVideo], (obj) => {
-//         currentBookmarks = obj[currentVideo] ? JSON.parse(obj[currentVideo]) : [];
-//     });
 const viewBookmarks = (currentBookmarks = []) => {
     const bookmarksElement = document.getElementById("bookmarks");
     bookmarksElement.innerHTML = "";
@@ -58,14 +51,8 @@ const onDelete = async e => {
     bookmarkElementToDelete.parentNode.removeChild(bookmarkElementToDelete);
     chrome.tabs.sendMessage(activeTab.id, {
         type: "DELETE",
-        value: bookmarkTime,
-    // }, viewBookmarks);
-    }, (response) => {
-        console.log(response);
-        viewBookmarks(response.data);
+        value: bookmarkTime
     });
-    // });
-    // refreshPopup();
 };
 
 const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
@@ -77,28 +64,18 @@ const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
     controlParentElement.appendChild(controlElement);
 };
 
-const refreshPopup = () => {
-    chrome.storage.sync.get([currentVideo], (obj) => {
-        const currentVideoBookmarks = obj[currentVideo] ? JSON.parse(obj[currentVideo]) : [];
-        viewBookmarks(currentVideoBookmarks);
-    });
-};
-
 document.addEventListener("DOMContentLoaded", async () => {
     const activeTab = await getActiveTabURL();
     const queryParameters = activeTab.url.split("?")[1];
     const urlParameters = new URLSearchParams(queryParameters);
 
-    // const currentVideo = urlParameters.get("v");
-    currentVideo = urlParameters.get("v");
+    const currentVideo = urlParameters.get("v");
 
     if (activeTab.url.includes("youtube.com/watch") && currentVideo) {
-        refreshPopup(currentVideo);
-        // chrome.storage.sync.get([currentVideo], (obj) => {
-        //     const currentVideoBookmarks = obj[currentVideo] ? JSON.parse(obj[currentVideo]) : [];
-        //     viewBookmarks(currentVideoBookmarks);
-        // });
-        // viewBookmarks();
+        chrome.storage.sync.get([currentVideo], (obj) => {
+            const currentVideoBookmarks = obj[currentVideo] ? JSON.parse(obj[currentVideo]) : [];
+            viewBookmarks(currentVideoBookmarks);
+        });
     } else {
         const container = document.getElementsByClassName("container")[0];
         container.innerHTML = '<div class="title">This is not a youtube video page.</div>'
